@@ -37,7 +37,8 @@ const run = async() =>{
               // add new inventory
               app.put('/laptops/addnew', async(req, res)=>{
                 const newInventory = req.body;
-                console.log(newInventory);
+                const cursor = await laptopsCollection.insertOne(newInventory);
+                res.send(cursor)
               })
           }
           finally{
