@@ -44,8 +44,12 @@ const run = async() =>{
              app.put('/laptop/update', async(req, res)=>{
                const id = req.query.id;
                const updatedData = req.body;
-               console.log(updatedData)
-               console.log(id)
+               const updatedDoc = {
+                 $set: updatedData
+               }
+               const filter = {_id: ObjectId(id)};
+               const result = await laptopsCollection.updateOne(filter, updatedDoc, {upsert: false} );
+               res.send(result)
              })
 
               //  delete single inventory
