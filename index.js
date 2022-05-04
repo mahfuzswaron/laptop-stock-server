@@ -30,16 +30,33 @@ const run = async() =>{
                 const id = req.params.id;
                 const query = {_id: ObjectId(id)};
                 const laptop = await laptopsCollection.findOne(query);
-                console.log(laptop)
                 res.send(laptop)
               })
 
               // add new inventory
-              app.put('/laptops/addnew', async(req, res)=>{
+              app.post('/laptops/addnew', async(req, res)=>{
                 const newInventory = req.body;
                 const cursor = await laptopsCollection.insertOne(newInventory);
                 res.send(cursor)
               })
+
+              // update quantity and sold
+             app.put('/laptop/update', async(req, res)=>{
+               const id = req.query.id;
+               const updatedData = req.body;
+               console.log(updatedData)
+               console.log(id)
+             })
+
+              //  delete single inventory
+              app.post('/laptop', async(req, res)=>{
+                const id = req.query.id;
+                const query = {_id: ObjectId(id)}
+                const result = await laptopsCollection.deleteOne(query);
+                res.send(result)
+              })
+
+
           }
           finally{
 
