@@ -6,7 +6,15 @@ const app = express()
 const port = process.env.PORT || 4000;
 
 app.use(cors());
-app.use(express.json())
+app.use(express.json());
+
+if (process.env.NODE_ENV === 'production') {
+	app.use(express.static('client/build'));
+}
+app.get('*', (request, response) => {
+	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@laptop-stock-cluster.lbnux.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
@@ -48,7 +56,7 @@ const run = async() =>{
                  $set: updatedData
                }
                const filter = {_id: ObjectId(id)};
-               const result = await laptopsCollection.updateOne(filter, updatedDoc, {upsert: false} );
+               const result = await laptopsCollection.updateOne(filter, updatedDoc, {upsert: true} );
                res.send(result)
              })
 
