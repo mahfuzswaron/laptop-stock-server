@@ -8,32 +8,30 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-// if (process.env.NODE_ENV === 'production') {
-// 	app.use(express.static('client/build'));
-// }
-// app.get('*',(req, res) => {
-//   res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-// });
-
-const distDir = __dirname + "/dist/";
-app.use(express.static(distDir));
-
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@laptop-stock-cluster.lbnux.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri);
-const laptopsCollection = client.db('laptop-db').collection('laptops')
+const laptopsCollection = client.db('laptop-db').collection('laptops');
+const blogsCollection = client.db('blogs-db').collection('blogs')
 
 const run = async() =>{
           try{
 
               await client.connect();
 
-              //get all inventories
+              // get all inventories
               app.get('/laptops', async(req, res)=>{
                   const cursor =  laptopsCollection.find({});
                   const laptops = await cursor.toArray();
                   res.send(laptops);
+              })
+
+              // get blogs
+            app.get('/blogs', async (req, res) => {
+              const cursor = blogsCollection.find({});
+              const blogs = await cursor.toArray();
+              res.send(blogs)
               })
 
               // get inventory by id
