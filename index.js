@@ -1,4 +1,5 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+// const laptops = require("./api/laptops");
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors')
@@ -13,75 +14,78 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@laptop-
 
 const client = new MongoClient(uri);
 const laptopsCollection = client.db('laptop-db').collection('laptops');
-const blogsCollection = client.db('blogs-db').collection('blogs')
+const blogsCollection = client.db('blogs-db').collection('blogs');
 
-const run = async() =>{
-          try{
+module.exports = client;
 
-              await client.connect();
+const run = async () => {
+  try {
 
-              // get all inventories
-              app.get('/laptops', async(req, res)=>{
-                  const cursor =  laptopsCollection.find({});
-                  const laptops = await cursor.toArray();
-                  res.send(laptops);
-              })
+    await client.connect();
 
-              // get blogs
-            app.get('/blogs', async (req, res) => {
-              const cursor = blogsCollection.find({});
-              const blogs = await cursor.toArray();
-              res.send(blogs)
-              })
+    // get all inventories
+    app.get('/api/laptops', async (req, res) => {
+      const cursor = laptopsCollection.find({});
+      const laptops = await cursor.toArray();
+      res.send(laptops);
+    })
+    // app.use("/api/laptops", laptops)
 
-              // get inventory by id
-              app.get('/laptops/:id', async(req, res)=>{
-                const id = req.params.id;
-                const query = {_id: ObjectId(id)};
-                const laptop = await laptopsCollection.findOne(query);
-                res.send(laptop)
-              })
+    // get blogs
+    app.get('/blogs', async (req, res) => {
+      const cursor = blogsCollection.find({});
+      const blogs = await cursor.toArray();
+      res.send(blogs)
+    })
 
-              // add new inventory
-              app.post('/laptops/addnew', async(req, res)=>{
-                const newInventory = req.body;
-                const cursor = await laptopsCollection.insertOne(newInventory);
-                res.send(cursor)
-              })
+    // get inventory by id
+    app.get('/laptops/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const laptop = await laptopsCollection.findOne(query);
+      res.send(laptop)
+    })
 
-              // update quantity and sold
-             app.put('/laptop/update', async(req, res)=>{
-               const id = req.query.id;
-               const updatedData = req.body;
-               const updatedDoc = {
-                 $set: updatedData
-               }
-               const filter = {_id: ObjectId(id)};
-               const result = await laptopsCollection.updateOne(filter, updatedDoc, {upsert: true} );
-               res.send(result)
-             })
+    // add new inventory
+    app.post('/laptops/addnew', async (req, res) => {
+      const newInventory = req.body;
+      const cursor = await laptopsCollection.insertOne(newInventory);
+      res.send(cursor)
+    })
 
-              //  delete single inventory
-              app.post('/laptop', async(req, res)=>{
-                const id = req.query.id;
-                const query = {_id: ObjectId(id)}
-                const result = await laptopsCollection.deleteOne(query);
-                res.send(result)
-              })
+    // update quantity and sold
+    app.put('/laptop/update', async (req, res) => {
+      const id = req.query.id;
+      const updatedData = req.body;
+      const updatedDoc = {
+        $set: updatedData
+      }
+      const filter = { _id: ObjectId(id) };
+      const result = await laptopsCollection.updateOne(filter, updatedDoc, { upsert: true });
+      res.send(result)
+    })
+
+    //  delete single inventory
+    app.post('/laptop', async (req, res) => {
+      const id = req.query.id;
+      const query = { _id: ObjectId(id) }
+      const result = await laptopsCollection.deleteOne(query);
+      res.send(result)
+    })
 
 
-          }
-          finally{
+  }
+  finally {
 
-          }
+  }
 }
 
 run().catch(e => console.log(e))
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
-  })
-  
+  res.send('Hello World!')
+})
+
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-  })
+  console.log(`Example app listening on port ${port}`)
+})
