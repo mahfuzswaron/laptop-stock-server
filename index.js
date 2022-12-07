@@ -15,8 +15,8 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@laptop-
 const client = new MongoClient(uri);
 const laptopsCollection = client.db('laptop-db').collection('laptops');
 const blogsCollection = client.db('blogs-db').collection('blogs');
-
-module.exports = client;
+// console.log(laptopsCollection);
+module.exports = laptopsCollection;
 
 const run = async () => {
   try {
@@ -24,7 +24,7 @@ const run = async () => {
     await client.connect();
 
     // get all inventories
-    app.get('/api/laptops', async (req, res) => {
+    app.get('/laptops', async (req, res) => {
       const cursor = laptopsCollection.find({});
       const laptops = await cursor.toArray();
       res.send(laptops);
